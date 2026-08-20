@@ -1,0 +1,2 @@
+obj-$(CONFIG_SOC_LS2K500) += ls2k500/
+obj-$(CONFIG_SOC_LS2K1000) += ls2k1000/

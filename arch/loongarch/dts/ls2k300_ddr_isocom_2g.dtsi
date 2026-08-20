@@ -1,0 +1,46 @@
+/ {
+	memory {
+		name = "memory";
+		device_type = "memory";
+		reg = <0x90000000 0x00000000 0 0x10000000
+		       0x90000000 0x90000000 0 0x70000000>;
+		u-boot,dm-pre-reloc;
+	};
+
+	// MD4C1002G
+	mc0: ram@0 {
+		compatible = "loongson,ls2k0300-ddr";
+		u-boot,dm-pre-reloc;
+
+		soc-config-reg = <0x1fe10100>;
+		mc-disable-offs = <4>;
+		mc-default-offs = <5>;
+
+		sdram-type = "ddr4";	// ddr4
+		dimm-type = "udimm";	// rdimm/udimm/sodimm
+
+		cs-map = <0x1>;		// bit map: 	bit0 -- cs0
+					// 		bit1 -- cs1
+					//		bit2 -- cs2
+					//		bit3 -- cs3
+
+		data-width = <16>;	// 8/16
+		sdram-width = <16>;	// 8/16
+		sdram-banks = <4>;	// 4/8
+		sdram-bank-groups = <2>;	// 0/2/4
+		sdram-rows = <17>;
+		sdram-cols = <10>;
+
+		// clk-latency = <0x30>; //
+		// rd-latency = <0x9>; 	//
+		// wr-latency = <0x4>; 	//
+		mc-dqs-odt = <0x8>;		//
+		cmd-timing-mode = <1>;	// 0: 1T mode; 1(default): 2T mode; 2: 3T mode.
+
+		// To enable the feature below, uncomment it.
+		ddr-param-store;
+		// early-printf;
+		/* addr-mirror; */
+		/* reset-revert; */
+	};
+};

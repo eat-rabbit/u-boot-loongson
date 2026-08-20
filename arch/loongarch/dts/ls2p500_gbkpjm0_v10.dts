@@ -1,0 +1,151 @@
+#include "ls2p500_g2p05z0_v10.dtsi"
+
+/ {
+	sysinfo-smbios {
+		compatible = "u-boot,sysinfo-smbios";
+		u-boot,dm-pre-reloc;
+
+		smbios {
+			system {
+				manufacturer = "Loongson";
+				product = "LS2P500";
+			};
+
+			baseboard {
+				manufacturer = "Loongson";
+				product = "LS2P500-GBKPJM0";
+			};
+
+			chassis {
+				manufacturer = "Loongson";
+				product = "LS2P500-GBKPJM0";
+			};
+		};
+	};
+};
+
+&gmac0 {
+	status = "okay";
+	phy-mode = "rgmii";
+	phy-handle = <&eth_phy0>;
+
+	mdio0: mdio@0 {
+		#address-cells = <1>;
+		#size-cells = <0>;
+		compatible = "snps,dwmac-mdio";
+
+		eth_phy0: ethernet-phy@0 {
+			reg = <0>;
+		};
+	};
+};
+
+&gmac1 {
+	status = "okay";
+	phy-mode = "rgmii";
+	phy-handle = <&eth_phy1>;
+
+	mdio1: mdio@1 {
+		#address-cells = <1>;
+		#size-cells = <0>;
+		compatible = "snps,dwmac-mdio";
+
+		eth_phy1: ethernet-phy@0 {
+			reg = <0>;
+		};
+	};
+};
+
+&sdio1 {
+	status = "okay";
+	use-sdcard;
+};
+
+&otg {
+	status = "okay";
+	// force host mode
+	hnp-srp-disable;
+};
+
+&pwrc {
+	domain-node {
+		bit = <0>;
+		clock-gate-la364 {
+			bit = <0>;
+		};
+		clock-gate-iodma {
+			bit = <1>;
+		};
+	};
+	domain-ddr {
+		bit = <2>;
+		clock-gate-ddriso {
+			bit = <20>;
+		};
+		clock-gate-ddrrst {
+			bit = <21>;
+		};
+		clock-gate-ddr {
+			bit = <22>;
+		};
+	};
+	domain-print {
+		bit = <4>;
+		always-on;
+		clock-gate-prtla132 {
+			bit = <2>;
+			clock-gate-off;
+		};
+		clock-gate-prtl1xbar {
+			bit = <3>;
+		};
+	};
+	domain-scan {
+		bit = <6>;
+		clock-gate-scala132 {
+			bit = <4>;
+			clock-gate-off;
+		};
+		clock-gate-scadev {
+			bit = <5>;
+		};
+	};
+	domain-sys {
+		bit = <8>;
+		clock-gate-boot {
+			bit = <8>;
+		};
+		clock-gate-gmac1 {
+			bit = <9>;
+		};
+		clock-gate-usb {
+			bit = <10>;
+		};
+		clock-gate-sdio {
+			bit = <11>;
+		};
+		clock-gate-apbdev {
+			bit = <12>;
+		};
+	};
+	domain-resume {
+		bit = <10>;
+		always-on;
+		clock-gate-gmac0 {
+			bit = <16>;
+		};
+		clock-gate-otg {
+			bit = <17>;
+		};
+	};
+	domain-image {
+		bit = <12>;
+		dpm-off;
+		clock-gate-jbig {
+			bit = <18>;
+		};
+		clock-gate-jpeg {
+			bit = <19>;
+		};
+	};
+};

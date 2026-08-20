@@ -1,0 +1,143 @@
+#include "ls2k300.dtsi"
+#include "ls2k300_ddr_samsung_512m.dtsi"
+#include <dt-bindings/gpio/gpio.h>
+#include <dt-bindings/power-domain/ls2k500-power-domain.h>
+
+/ {
+	model = "loongson-2k300";
+
+	chosen {
+		stdout-path = "serial0:115200n8";
+		bootargs = "earlycon";
+	};
+
+	reserved-memory {
+		#address-cells = <2>;
+		#size-cells = <2>;
+		ranges;
+
+		bootparam: bootparam_region {
+			reg = <0x90000000 0x0f000000 0x0 0x1000000>;
+			no-map;
+		};
+	};
+
+	sysinfo-smbios {
+		compatible = "u-boot,sysinfo-smbios";
+		u-boot,dm-pre-reloc;
+
+		smbios {
+			system {
+				manufacturer = "Loongson";
+				product = "LS2K300";
+			};
+
+			baseboard {
+				manufacturer = "Loongson";
+				product = "LS2K300-PAI";
+			};
+
+			chassis {
+				manufacturer = "Loongson";
+				product = "LS2K300-PAI";
+			};
+		};
+	};
+
+	panel_rgb: panel-rgb {
+		compatible = "simple-panel";
+		backlight = <&panel_bkl>;
+
+		display-timings {
+#if 0	// 4.3' LCD
+			native-mode = <&atk_md0430r>;
+
+			atk_md0430r: 800x480 {
+				clock-frequency = <27000000>;
+				hactive = <800>;
+				vactive = <480>;
+				hsync-len = <40>;
+				hfront-porch = <48>;
+				hback-porch = <40>;
+				vfront-porch = <13>;
+				vback-porch = <32>;
+				vsync-len = <0>;
+				de-active = <1>;
+				hsync-active = <0>;
+				vsync-active = <0>;
+				pixelclk-active = <0>;
+			};
+#else	// 7' LCD
+			native-mode = <&atk_md0700r>;
+
+			atk_md0700r: 1024x600 {
+				clock-frequency = <51200000>;
+				hactive = <1024>;
+				vactive = <600>;
+				hsync-len = <20>;
+				hfront-porch = <160>;
+				hback-porch = <140>;
+				vfront-porch = <12>;
+				vback-porch = <20>;
+				vsync-len = <3>;
+				de-active = <1>;
+				hsync-active = <0>;
+				vsync-active = <0>;
+				pixelclk-active = <0>;
+			};
+#endif
+		};
+	};
+
+	panel_bkl: backlight {
+		compatible = "gpio-backlight";
+		gpios = <&gpio0 43 GPIO_ACTIVE_HIGH>;
+		// default-on;
+	};
+};
+
+&spi0 {
+	status = "okay";
+
+	spi-flash@0 {
+		compatible = "jedec,spi-nor";
+		spi-max-frequency = <25000000>; /* input clock */
+		reg = <0>; /* CS0 */
+	};
+};
+
+&emmc0 {
+	status = "okay";
+};
+
+&gmac0 {
+	status = "okay";
+	phy-mode = "rgmii-txid";
+	// max-speed = <100>;
+	phy-handle = <&eth_phy0>;
+	mdio0: mdio@0 {
+		#address-cells = <1>;
+		#size-cells = <0>;
+		compatible = "snps,dwmac-mdio";
+
+		eth_phy0: ethernet-phy@0 {
+			reg = <0>;
+		};
+	};
+};
+
+&dvo0 {
+	status = "okay";
+	connector-type = "panel";	// panel, vga, hdmi
+	connector = <&panel_rgb>;
+	pix-fmt = "rgb888";
+};
+
+&sdio1 {
+	status = "okay";
+	use-sdcard;
+};
+
+&otg {
+	status = "okay";
+};

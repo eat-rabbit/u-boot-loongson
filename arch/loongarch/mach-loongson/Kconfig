@@ -1,0 +1,197 @@
+menu "Loongson setup"
+choice
+	prompt "Loongson soc family select"
+	depends on ARCH_LA_LOONGSON
+
+config SOC_LS2K500
+	bool "Support for LS2K500 family SoCs"
+	depends on SUPPORTS_CPU_LOONGARCH64
+	select LOONGARCH_L1_CACHE_SHIFT_6
+
+config SOC_LS2K1000
+	bool "Support for LS2K1000 family SoCs"
+	depends on SUPPORTS_CPU_LOONGARCH64
+	select LOONGARCH_L1_CACHE_SHIFT_6
+
+config SOC_LS2P500
+	bool "Support for LS2P500 family SoCs"
+	depends on SUPPORTS_CPU_LOONGARCH64
+	select LOONGARCH_L1_CACHE_SHIFT_6
+
+config SOC_LS2K300
+	bool "Support for LS2K300 family SoCs"
+	depends on SUPPORTS_CPU_LOONGARCH64
+	select LOONGARCH_L1_CACHE_SHIFT_6
+
+endchoice
+
+choice
+	prompt "CPU freq select"
+	depends on ARCH_LA_LOONGSON
+
+config CPU_500MHZ
+	bool "500MHz"
+
+config CPU_600MHZ
+	bool "600MHz"
+
+config CPU_700MHZ
+	bool "700MHz"
+
+config CPU_800MHZ
+	bool "800MHz"
+	depends on SOC_LS2K1000 || SOC_LS2P500 || SOC_LS2K300
+
+config CPU_900MHZ
+	bool "900MHz"
+	depends on SOC_LS2K1000 || SOC_LS2K300
+
+config CPU_1000MHZ
+	bool "1000MHz"
+	depends on SOC_LS2K1000 || SOC_LS2K300
+
+config CPU_1100MHZ
+	bool "1100MHz"
+	depends on SOC_LS2K1000 || SOC_LS2K300
+endchoice
+
+choice
+	prompt "Board select"
+	default TARGET_LS2K500_GENERIC if SOC_LS2K500
+	default TARGET_LS2K1000_GENERIC if SOC_LS2K1000
+
+
+config TARGET_LS2K500_GENERIC
+	bool "Generic LS2K500 SoC Board"
+	depends on SOC_LS2K500
+	help
+	  This supports Loongson Generic 2K500 SoC family board.
+
+config TARGET_LS2K500_EVB
+	bool "LS2K500 EVB Board"
+	depends on SOC_LS2K500
+	help
+	  This supports Loongson 2K500 EVB board.
+
+config TARGET_LS2K500_MINI_DP
+	bool "LS2K500 MINI_DP Board"
+	depends on SOC_LS2K500
+	help
+	  This supports Loongson 2K500 MINI_DP board.
+
+config TARGET_LS2K500_MODI_HCT
+	bool "LS2K500 MODI_HCT Board"
+	depends on SOC_LS2K500
+	help
+	  This supports Loongson 2K500 MODI_HCT board.
+
+config TARGET_LS2K500_HUOLONG_MB
+	bool "LS_GD 2K500 HUOLONG MB Board"
+	depends on SOC_LS2K500
+	help
+	  This supports Loongson GD 2K500 HuoLong MB board.
+
+config TARGET_LS2K500_DAYU400_MB
+	bool "LS_GD 2K500 DAYU400 MB Board"
+	depends on SOC_LS2K500
+	help
+	  This supports HiHOPE 2K500 DAYU400 MB board.
+
+config TARGET_LS2K500_ZHENGTAI_PCS1800_V10
+	bool "LS_GD 2K500 ZHENGTAI PCS1800 V1.0 Board"
+	depends on SOC_LS2K500
+	help
+	  This supports 2K500 ZHENGTAI PCS1800 V1.0 board.
+
+config TARGET_LS2K500_ZJJZ
+	bool "LS_GD 2K500 ZheJiang xinling ZJJZ Board"
+	depends on SOC_LS2K500
+	help
+	  This supports 2K500 ZheJiang xinling ZJJZ board.
+
+config TARGET_LS2K1000_GENERIC
+	bool "Generic LS2K1000 SoC Board"
+	depends on SOC_LS2K1000
+	help
+	  This supports Loongson Generic 2K1000 SoC family board.
+
+config TARGET_LS2K1000_JINLONG_MB
+	bool "LS_GD 2K1000 JinLong MB Board"
+	depends on SOC_LS2K1000
+	help
+	  This supports Loongson GD 2k1000 JinLong MB board.
+
+config TARGET_LS2K1000_DP
+	bool "LS_GD 2K1000 DP Board"
+	depends on SOC_LS2K1000
+	help
+	  This supports Loongson GD 2k1000 DP board.
+
+config TARGET_LS2K1000_GBKPDM0_V10
+	bool "LS_GD 2K1000 GBKPDM0 V10 Board"
+	depends on SOC_LS2K1000
+	help
+	  This supports Loongson GD 2k1000 GBKPDM0 V10 board.
+
+config TARGET_LS2P500_EVB
+	bool "LS2P500 EVB Board"
+	depends on SOC_LS2P500
+	help
+	  This supports Loongson 2P500 EVB board.
+
+config TARGET_LS2P500_RSJ
+	bool "LS2P500 RSJ Board"
+	depends on SOC_LS2P500
+	help
+	  This supports Loongson 2P500 RSJ board.
+
+config TARGET_LS2K300_MINI_DP
+	bool "LS2K300 MINI_DP Board"
+	depends on SOC_LS2K300
+	help
+	  This supports Loongson 2K300 MINI_DP board.
+
+endchoice
+
+config SYS_CPU
+	default "LA264" if SOC_LS2K500 || SOC_LS2K1000 || SOC_LS2K300
+	default "LA364" if SOC_LS2P500
+
+config SYS_SOC
+	default "ls2k500" if SOC_LS2K500
+	default "ls2k1000" if SOC_LS2K1000
+	default "ls2p500" if SOC_LS2P500
+	default "ls2k300" if SOC_LS2K300
+
+config CPU_FREQ
+	int
+	default 500 if CPU_500MHZ
+	default 600 if CPU_600MHZ
+	default 700 if CPU_700MHZ
+	default 800 if CPU_800MHZ
+	default 900 if CPU_900MHZ
+	default 1000 if CPU_1000MHZ
+	default 1100 if CPU_1100MHZ
+
+source "board/loongson/Kconfig"
+
+choice 
+	prompt "DDR4 SDRAM Select"
+	depends on TARGET_LS2K300_MINI_DP
+	default LOONGSON_DDR4_DEFAULT
+
+config LOONGSON_DDR4_DEFAULT
+	bool "Samsung K4A4G165xx(Default)"
+
+config LOONGSON_DDR4_SINKER_1G
+	bool "Sinker SNC1216S26SS12"
+
+config LOONGSON_DDR4_ISOCOM_1G
+	bool "Isocom MD4C1001G"
+
+config LOONGSON_DDR4_ISOCOM_2G
+	bool "Isocom MD4C1002G"
+
+endchoice
+
+endmenu

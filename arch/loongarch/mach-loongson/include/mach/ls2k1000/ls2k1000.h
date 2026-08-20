@@ -1,0 +1,172 @@
+#ifndef __MACH_LA_LS2K1000_H
+#define __MACH_LA_LS2K1000_H
+
+#include <asm/addrspace.h>
+
+// linux/bitops.h中定义的BIT在lowinit.s中无法展开，故定义_BIT
+#define _BIT(nr)			        (1 << (nr))
+
+#define LS_GENERAL_CFG0				PHYS_TO_UNCACHED(0x1fe00420)
+#define LS_GENERAL_CFG1				PHYS_TO_UNCACHED(0x1fe00428)
+#define LS_GENERAL_CFG2				PHYS_TO_UNCACHED(0x1fe00430)
+
+#define LS_CFG0_GMAC1_SEL            _BIT(3)
+#define LS_CFG0_HDA_SEL              _BIT(4)
+#define LS_CFG0_I2S_SEL              _BIT(6)
+#define LS_CFG0_SATA_SEL             _BIT(8)
+#define LS_CFG0_NAND_SEL             _BIT(9)
+#define LS_CFG0_I2C0_SEL             _BIT(10)
+#define LS_CFG0_I2C1_SEL             _BIT(11)
+#define LS_CFG0_PWM0_SEL             _BIT(12)
+#define LS_CFG0_PWM1_SEL             _BIT(13)
+#define LS_CFG0_PWM2_SEL             _BIT(14)
+#define LS_CFG0_PWM3_SEL             _BIT(15)
+#define LS_CFG0_CAN0_SEL             _BIT(16)
+#define LS_CFG0_CAN1_SEL             _BIT(17)
+#define LS_CFG0_SDIO_SEL             _BIT(20)
+
+#define LS_CFG2_DVO0_SEL            _BIT(1)
+#define LS_CFG2_DVO1_SEL            _BIT(4)
+#define LS_CFG2_PCIE0_ENABLE        _BIT(16)
+#define LS_CFG2_PCIE1_ENABLE        _BIT(17)
+#define LS_CFG2_CAM_DISABLE         _BIT(19)
+#define LS_CFG2_VPU_DISABLE         _BIT(20)
+
+#define LS_CPU_WIN0_BASE 	        PHYS_TO_UNCACHED(0x1fe02000)
+#define LS_CPU_WIN1_BASE 	        PHYS_TO_UNCACHED(0x1fe02008)
+#define LS_CPU_WIN2_BASE 	        PHYS_TO_UNCACHED(0x1fe02010)
+#define LS_CPU_WIN3_BASE 	        PHYS_TO_UNCACHED(0x1fe02018)
+#define LS_CPU_WIN4_BASE 	        PHYS_TO_UNCACHED(0x1fe02020)
+#define LS_CPU_WIN5_BASE 	        PHYS_TO_UNCACHED(0x1fe02028)
+#define LS_CPU_WIN6_BASE 	        PHYS_TO_UNCACHED(0x1fe02030)
+#define LS_CPU_WIN7_BASE 	        PHYS_TO_UNCACHED(0x1fe02038)
+#define LS_CPU_WIN0_MASK 	        PHYS_TO_UNCACHED(0x1fe02040)
+#define LS_CPU_WIN1_MASK 	        PHYS_TO_UNCACHED(0x1fe02048)
+#define LS_CPU_WIN2_MASK 	        PHYS_TO_UNCACHED(0x1fe02050)
+#define LS_CPU_WIN3_MASK 	        PHYS_TO_UNCACHED(0x1fe02058)
+#define LS_CPU_WIN4_MASK 	        PHYS_TO_UNCACHED(0x1fe02060)
+#define LS_CPU_WIN5_MASK 	        PHYS_TO_UNCACHED(0x1fe02068)
+#define LS_CPU_WIN6_MASK 	        PHYS_TO_UNCACHED(0x1fe02070)
+#define LS_CPU_WIN7_MASK 	        PHYS_TO_UNCACHED(0x1fe02078)
+#define LS_CPU_WIN0_MMAP 	        PHYS_TO_UNCACHED(0x1fe02080)
+#define LS_CPU_WIN1_MMAP 	        PHYS_TO_UNCACHED(0x1fe02088)
+#define LS_CPU_WIN2_MMAP 	        PHYS_TO_UNCACHED(0x1fe02090)
+#define LS_CPU_WIN3_MMAP 	        PHYS_TO_UNCACHED(0x1fe02098)
+#define LS_CPU_WIN4_MMAP 	        PHYS_TO_UNCACHED(0x1fe020a0)
+#define LS_CPU_WIN5_MMAP 	        PHYS_TO_UNCACHED(0x1fe020a8)
+#define LS_CPU_WIN6_MMAP 	        PHYS_TO_UNCACHED(0x1fe020b0)
+#define LS_CPU_WIN7_MMAP 	        PHYS_TO_UNCACHED(0x1fe020b8)
+
+#define LS_SCACHE_LOCK_WIN0_BASE    PHYS_TO_UNCACHED(0x1fe00200)
+#define LS_SCACHE_LOCK_WIN1_BASE    PHYS_TO_UNCACHED(0x1fe00208)
+#define LS_SCACHE_LOCK_WIN2_BASE    PHYS_TO_UNCACHED(0x1fe00210)
+#define LS_SCACHE_LOCK_WIN3_BASE    PHYS_TO_UNCACHED(0x1fe00218)
+#define LS_SCACHE_LOCK_WIN0_MASK    PHYS_TO_UNCACHED(0x1fe00240)
+#define LS_SCACHE_LOCK_WIN1_MASK    PHYS_TO_UNCACHED(0x1fe00248)
+#define LS_SCACHE_LOCK_WIN2_MASK    PHYS_TO_UNCACHED(0x1fe00250)
+#define LS_SCACHE_LOCK_WIN3_MASK    PHYS_TO_UNCACHED(0x1fe00258)
+
+#define LS_CORE0_IPISR 	            PHYS_TO_UNCACHED(0x1fe01000)
+#define LS_CORE0_IPIEN 	            (LS_CORE0_IPISR + 0x4)
+#define LS_CORE0_IPISET 	        (LS_CORE0_IPISR + 0x8)
+#define LS_CORE0_IPICLR 	        (LS_CORE0_IPISR + 0xc)
+
+#define LS_CORE1_IPISR 	            PHYS_TO_UNCACHED(0x1fe01100)
+#define LS_CORE1_IPIEN 	            (LS_CORE1_IPISR + 0x4)
+#define LS_CORE1_IPISET 	        (LS_CORE1_IPISR + 0x8)
+#define LS_CORE1_IPICLR 	        (LS_CORE1_IPISR + 0xc)
+
+#define LS_APB_BASE                 PHYS_TO_UNCACHED(0x1fe20000)
+#define LS_UART0_REG_BASE           LS_APB_BASE
+#define LS_UART1_REG_BASE           (LS_APB_BASE + 0x100)
+#define LS_UART2_REG_BASE           (LS_APB_BASE + 0x200)
+#define LS_ACPI_REG_BASE            (LS_APB_BASE + 0x7000)
+#define LS_RTC_REG_BASE             (LS_APB_BASE + 0x7800)
+#define LS_ACPI_PM1_STS_OFFSET      0x0c
+#define LS_PM1_STS_PWRBTN_STS       _BIT(8)
+
+#define LS_SATA_CONF                PHYS_TO_UNCACHED(0x1fe00450)
+#define LS_SATA_BASE                PHYS_TO_UNCACHED(0x400e0000)
+
+#define LS_NODE_PLL_L				PHYS_TO_UNCACHED(0x1fe00480)
+#define LS_NODE_PLL_H				PHYS_TO_UNCACHED(0x1fe00488)
+#define LS_DDR_PLL_L				PHYS_TO_UNCACHED(0x1fe00490)
+#define LS_DDR_PLL_H				PHYS_TO_UNCACHED(0x1fe00498)
+#define LS_DC_PLL_L				    PHYS_TO_UNCACHED(0x1fe004a0)
+#define LS_DC_PLL_H				    PHYS_TO_UNCACHED(0x1fe004a8)
+#define LS_PIX0_PLL_L				PHYS_TO_UNCACHED(0x1fe004b0)
+#define LS_PIX0_PLL_H				PHYS_TO_UNCACHED(0x1fe004b8)
+#define LS_PIX1_PLL_L				PHYS_TO_UNCACHED(0x1fe004c0)
+#define LS_PIX1_PLL_H				PHYS_TO_UNCACHED(0x1fe004c8)
+#define LS_FREQ_SCALE				PHYS_TO_UNCACHED(0x1fe004d0)
+
+#define LS_PCIE0_CONF0		        PHYS_TO_UNCACHED(0x1fe00580)
+#define LS_PCIE0_CONF1		        PHYS_TO_UNCACHED(0x1fe00588)
+#define LS_PCIE0_PHY			    PHYS_TO_UNCACHED(0x1fe00590)
+#define LS_PCIE1_CONF0		        PHYS_TO_UNCACHED(0x1fe005a0)
+#define LS_PCIE1_CONF1		        PHYS_TO_UNCACHED(0x1fe005a8)
+#define LS_PCIE1_PHY			    PHYS_TO_UNCACHED(0x1fe005b0)
+#define LS_PCIE0_1_OFFSET           (LS_PCIE1_PHY - LS_PCIE0_PHY)
+#define LS_PCIE_LOW_POWER           _BIT(24)
+
+#define LS_PCIE_TYPE0_ADDR			PHYS_TO_UNCACHED(0xfe00000000)
+#define LS_PCIE_TYPE1_ADDR			PHYS_TO_UNCACHED(0xfe10000000)
+#define LS_PCIE_TYPE0_CMD_OFFSET    0x04    //Command Register
+#define LS_PCIE_TYPE0_BAR0_OFFSET   0x10    //Base Address Register 0
+#define LS_PCIE_CMD_IO_ENABLE       _BIT(0)  //I/O 访问使能
+#define LS_PCIE_CMD_MEM_ENABLE      _BIT(1)  //存储器访问使能
+
+#define LS_PCIE_CONF_HDR_FUN_NUM_OFFSET         8   //Function Number [10:8]
+#define LS_PCIE_CONF_HDR_DEV_NUM_OFFSET         11  //Device Number [15:11]
+#define LS_PCIE_CONF_HDR_BUS_NUM_OFFSET         16  //Bus Number [23:16]
+//[7:0] 和  [27:24] 组合起来表示偏移,大小为 4K
+#define LS_PCIE_CONF_HDR_OFFSET_LO_OFFSET       0   //Offset Number [7:0]
+#define LS_PCIE_CONF_HDR_OFFSET_HI_OFFSET       24  //Offset Number [27:24]
+
+
+#define LS_PCIE_APB_ADDR            PHYS_TO_UNCACHED(0xfe00001000)
+#define LS_PCIE_GMAC0_ADDR          PHYS_TO_UNCACHED(0xfe00001800)
+#define LS_PCIE_GMAC1_ADDR          PHYS_TO_UNCACHED(0xfe00001900)
+#define LS_PCIE_USB_OTG_ADDR        PHYS_TO_UNCACHED(0xfe00002000)
+#define LS_PCIE_USB_EHCI_ADDR       PHYS_TO_UNCACHED(0xfe00002100)
+#define LS_PCIE_USB_OHCI_ADDR       PHYS_TO_UNCACHED(0xfe00002200)
+#define LS_PCIE_GPU_ADDR            PHYS_TO_UNCACHED(0xfe00002800)
+#define LS_PCIE_DC_ADDR             PHYS_TO_UNCACHED(0xfe00003000)
+#define LS_PCIE_HDA_ADDR            PHYS_TO_UNCACHED(0xfe00003800)
+#define LS_PCIE_SATA_ADDR           PHYS_TO_UNCACHED(0xfe00004000)
+#define LS_PCIE_PCIE0_P0_ADDR       PHYS_TO_UNCACHED(0xfe00004800)
+#define LS_PCIE_PCIE0_P1_ADDR       PHYS_TO_UNCACHED(0xfe00005000)
+#define LS_PCIE_PCIE0_P2_ADDR       PHYS_TO_UNCACHED(0xfe00005800)
+#define LS_PCIE_PCIE0_P3_ADDR       PHYS_TO_UNCACHED(0xfe00006000)
+#define LS_PCIE_PCIE1_P0_ADDR       PHYS_TO_UNCACHED(0xfe00006800)
+#define LS_PCIE_PCIE1_P1_ADDR       PHYS_TO_UNCACHED(0xfe00007000)
+#define LS_PCIE_DMA_ADDR            PHYS_TO_UNCACHED(0xfe00007800)
+
+
+#define LS_PCICFG2_RECFG            PHYS_TO_UNCACHED(0x1fe03800)
+#define LS_SPI_IO_REG_BASE          PHYS_TO_UNCACHED(0x1fff0220)
+
+#define LS_PCICFG2_GMAC0_OFFSET     0x8
+#define LS_PCICFG2_GMAC1_OFFSET     0x10
+#define LS_PCICFG2_USB_OTG_OFFSET   0x18
+#define LS_PCICFG2_USB_EHCI_OFFSET  0x20
+#define LS_PCICFG2_USB_OHCI_OFFSET  0x28
+#define LS_PCICFG2_GPU_OFFSET       0x30
+#define LS_PCICFG2_DC_OFFSET        0x38
+#define LS_PCICFG2_HDA_OFFSET       0x40
+#define LS_PCICFG2_SATA_OFFSET      0x48
+#define LS_PCICFG2_DMA_OFFSET       0x50
+#define LS_PCICFG2_VPU_OFFSET       0x58
+#define LS_PCICFG2_CAM_OFFSET       0x60
+
+#define BOOTCORE_ID		    0
+#define RESERVED_COREMASK	0xfff0
+#define SHUTDOWN_MASK	    0
+
+#define FN_OFF			    0x020	//MailBox0
+#define SP_OFF			    0x028	//MailBox1
+#define GP_OFF			    0x030	//MailBox2
+#define A1_OFF			    0x038	//MailBox3
+
+
+#endif /* __MACH_LA_LS2K1000_H */

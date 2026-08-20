@@ -1,0 +1,46 @@
+#include "ls2k300.dtsi"
+
+#if defined(CONFIG_LOONGSON_DDR4_ISOCOM_2G)
+#include "ls2k300_ddr_isocom_2g.dtsi"
+#elif defined(CONFIG_LOONGSON_DDR4_ISOCOM_1G)
+#include "ls2k300_ddr_isocom_1g.dtsi"
+#elif defined(CONFIG_LOONGSON_DDR4_SINKER_1G)
+#include "ls2k300_ddr_sinker_1g.dtsi"
+#else
+#include "ls2k300_ddr_samsung_512m.dtsi"
+#endif
+
+#include <dt-bindings/gpio/gpio.h>
+
+/ {
+	chosen {
+		stdout-path = "serial0:115200n8";
+		bootargs = "earlycon";
+	};
+
+	reserved-memory {
+		#address-cells = <2>;
+		#size-cells = <2>;
+		ranges;
+
+		bootparam: bootparam_region {
+			reg = <0x90000000 0x0f000000 0x0 0x1000000>;
+			no-map;
+		};
+	};
+
+};
+
+&spi0 {
+	status = "okay";
+
+	spi-flash@0 {
+		compatible = "jedec,spi-nor";
+		spi-max-frequency = <25000000>; /* input clock */
+		reg = <0>; /* CS0 */
+	};
+};
+
+&emmc0 {
+	status = "okay";
+};

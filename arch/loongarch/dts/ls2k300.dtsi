@@ -1,0 +1,360 @@
+/dts-v1/;
+#include <dt-bindings/dma/loongson-dma.h>
+
+/ {
+	model = "loongson-2k300";
+	compatible = "loongson,loongson3";
+	#address-cells = <2>;
+	#size-cells = <2>;
+
+	aliases {
+		ethernet0 = &gmac0;
+		serial0 = &uart0;
+		spi0 = &spi0;
+	};
+
+	cpus {
+		#address-cells = <1>;
+		#size-cells = <0>;
+		cpu-map {
+			cluster0 {
+				core0 {
+					cpu = <&cpu0>;
+				};
+			};
+		};
+
+
+		cpu0: cpu@10000 {
+			device_type = "cpu";
+			compatible = "loongarch";
+			reg=<0>;
+			numa-node-id = <0>;
+		};
+
+	};
+
+	cpuic: interrupt-controller {
+		compatible = "loongson,cpu-interrupt-controller";
+		interrupt-controller;
+		#interrupt-cells = <1>;
+	};
+
+	extioiic: interrupt-controller@0x16001400 {
+		compatible = "loongson,extioi-interrupt-controller";
+		interrupt-controller;
+		#interrupt-cells = <1>;
+		interrupt-parent = <&cpuic>;
+		interrupts = <3>;
+		interrupt-names = "cascade";
+		vec_count=<128>;
+		misc_func=<0x100>;
+		eio_en_off=<27>;
+	};
+
+	clocks {
+		compatible = "simple-bus";
+		#address-cells = <1>;
+		#size-cells = <0>;
+		u-boot,dm-pre-reloc;
+
+		osc_clk: osc-clock {
+			compatible = "fixed-clock";
+			#clock-cells = <0>;
+			clock-frequency = <100000000>;
+			clock-output-names = "osc-clk";
+			u-boot,dm-pre-reloc;
+		};
+
+		boot_clk: boot-clock {
+			compatible = "fixed-clock";
+			#clock-cells = <0>;
+			clock-frequency = <200000000>;
+			clock-output-names = "boot-clk";
+			u-boot,dm-pre-reloc;
+		};
+
+		apb_clk: apb-clock {
+			compatible = "fixed-clock";
+			#clock-cells = <0>;
+			clock-frequency = <200000000>;
+			clock-output-names = "apb-clk";
+			u-boot,dm-pre-reloc;
+		};
+	};
+
+	pinmux: pinmux@0x16000490 {
+		compatible = "pinctrl-single";
+		reg = <0x80000000 0x16000490 0 0x20>;
+		#address-cells = <1>;
+		#size-cells = <0>;
+		#pinctrl-cells = <2>;
+		pinctrl-single,bit-per-mux;
+		pinctrl-single,register-width = <32>;
+		pinctrl-single,function-mask = <0x3>;
+
+		// dc0
+		dc_pins: pinmux_G0_G32_as_gmac {
+			pinctrl-single,bits = <0x0 0xffffffff 0xffffffff
+						0x4 0x00ffffff 0x00ffffff>;
+		};
+		//gmac
+		gmac0_pins: pinmux_G16_G47_as_gmac {
+			pinctrl-single,bits = <0x4 0xff000000 0xff000000
+						0x8 0x0000ffff 0x0000ffff>;
+		};
+		gmac1_pins: pinmux_G40_G55_as_gmac {
+			pinctrl-single,bits = <0x8 0xaaaa0000 0xffff0000
+						0xc 0x0000aaaa 0x0000ffff>;
+		};
+		//sdio
+		sdio0_pins: pinmux_G90_G99_as_sdio {
+			pinctrl-single,bits = <0x14 0xfff00000 0xfff00000
+						0x18 0x000000ff 0x000000ff>;
+		};
+		sdio1_pins: pinmux_G100_G105_as_sdio {
+			pinctrl-single,bits = <0x18 0x000fff00 0x000fff00>;
+		};
+	};
+
+	soc {
+		compatible = "ls,nbus", "simple-bus";
+		#address-cells = <2>;
+		#size-cells = <2>;
+		ranges = <0 0x10000000 0x80000000 0x10000000 0 0x10000000
+			0 0x0d000000  0 0x0d000000  0 0x2000000
+			0 0x40000000 0x80000000 0x40000000 0 0x40000000
+			0xfe 0x00000000 0x800000fe 0x00000000 0 0x40000000>;
+		u-boot,dm-pre-reloc;
+
+		isa@16400000 {
+			compatible = "isa";
+			#size-cells = <1>;
+			#address-cells = <2>;
+			ranges = <1 0 0 0x16400000 0x4000>;
+		};
+
+		uart0: serial@0x16100000 {
+			compatible = "ns16550a";
+			reg = <0 0x16100000 0 0x10>;
+			clocks = <&apb_clk>;
+			interrupt-parent = <&extioiic>;
+			interrupts = <2>;
+			no-loopback-test;
+			u-boot,dm-pre-reloc;
+		};
+
+		pmc: syscon@0x16124000 {
+			compatible = "syscon";
+			reg = <0x0 0x16124000 0x0 0x20>;
+		};
+
+		reboot {
+			compatible ="syscon-reboot";
+			regmap = <&pmc>;
+			offset = <0x0>;
+			mask = <0x1>;
+		};
+
+		poweroff {
+			compatible ="syscon-poweroff";
+			regmap = <&pmc>;
+			offset = <0x14>;
+			mask = <0x3c00>;
+			value = <0x3c00>;
+		};
+
+		dc: dc@0x16090000 {
+			compatible = "loongson,ls-dc", "simple-bus";
+			reg = <	0 0x16090000 0 0xffff		/* DC register base */
+					0 0x16000410 0 0x4			/* pix pll config0 addr */
+					0 0x16000414 0 0x4			/* pix pll config1 addr */
+					/* 0 0xd000000 0 0x2000000 */ >; 	/* framebuffer addr */
+
+			pinctrl-0 = <&dc_pins>;
+			pinctrl-names = "default";
+			#address-cells = <1>;
+			#size-cells = <0>;
+			u-boot,dm-pre-reloc;
+
+			dvo0: dvo@0 {
+				compatible = "loongson,ls-dc-dvo";
+				reg = <0>;
+				clocks = <&osc_clk>;
+				clock-names = "refclk";
+				pix-fmt = "rgb888"; // rgb444, rgb555, rgb565, rgb888
+				status = "disabled";
+			};
+
+		};
+
+		gmac0: ethernet@0x16020000 {
+			compatible = "snps,dwmac-3.70a", "snps,arc-dwmac-3.70a";
+			reg = <0 0x16020000 0 0x10000>;
+			pinctrl-0 = <&gmac0_pins>;
+			pinctrl-names = "default";
+			interrupt-parent = <&extioiic>;
+			interrupts = <118>;
+			interrupt-names = "macirq";
+			// mac-address = [ 64 48 48 48 48 60 ];/* [>mac 64:48:48:48:48:60 <]*/
+			phy-mode = "rgmii";
+			bus_id = <0x0>;
+			phy_addr = <0xffffffff>;
+			dma-mask = <0xffffffff 0xffffffff>;
+			// snps,pbl = <2>;
+			// snps,fixed-burst;
+			// snps,force_sf_dma_mode;
+			status = "disabled";
+
+		};
+
+		gmac1: ethernet@0x16030000 {
+			compatible = "snps,dwmac-3.70a", "snps,arc-dwmac-3.70a";
+			reg = <0 0x16030000 0 0x10000>;
+			pinctrl-0 = <&gmac1_pins>;
+			pinctrl-names = "default";
+			interrupt-parent = <&extioiic>;
+			interrupts = <119>;
+			interrupt-names = "macirq";
+			// mac-address = [ 64 48 48 48 48 61 ];/* [>mac 64:48:48:48:48:61 <]*/
+			phy-mode = "rgmii-id";
+			bus_id = <0x1>;
+			phy_addr = <0xffffffff>;
+			dma-mask = <0xffffffff 0xffffffff>;
+			status = "disabled";
+		};
+
+		gpio:gpio@0x16104000 {
+			#address-cells = <1>;
+			#size-cells = <0>;
+
+			compatible = "loongson,ls-gpio";
+			reg = <0 0x16104000 0 0x4000>;
+
+			gpio0: bank@0 {
+				reg = <0>;
+				gpio-controller;
+				#gpio-cells = <2>;
+				ngpios = <106>;
+				bytewise;
+				conf_offset = <0x800>;
+				out_offset = <0x900>;
+				in_offset = <0xa00>;
+			};
+		};
+
+		spi0: spi@0x16010000 {
+			compatible = "loongson,ls-spi";
+			reg = <0 0x16010000 0 0x40000>;
+			#address-cells = <1>;
+			#size-cells = <0>;
+			clocks = <&boot_clk>;
+			clock-names = "sclk";
+			status = "disabled";
+			u-boot,dm-pre-reloc;
+		};
+
+		spi1: spi@0x16018000 {
+			compatible = "loongson,ls-spi";
+			reg = <0 0x16018000 0 0x40000>;
+			#address-cells = <1>;
+			#size-cells = <0>;
+			clocks = <&boot_clk>;
+			clock-names = "sclk";
+			status = "disabled";
+		};
+
+		i2c0: i2c@0x16108000 {
+			compatible = "opencores,i2c-ocores";
+			reg = <0 0x16108000 0 0x1000>;
+			#address-cells = <1>;
+			#size-cells = <0>;
+			interrupt-parent = <&extioiic>;
+			interrupts = <14>;
+			clock-frequency = <400000>;
+			reg-shift = <0>;
+			status = "disabled";
+		};
+
+		i2c1: i2c@0x16109000 {
+			compatible = "opencores,i2c-ocores";
+			reg = <0 0x16109000 0 0x1000>;
+			#address-cells = <1>;
+			#size-cells = <0>;
+			interrupt-parent = <&extioiic>;
+			interrupts = <15>;
+			clock-frequency = <400000>;
+			status = "disabled";
+		};
+
+		i2c2: i2c@0x1610a000 {
+			compatible = "opencores,i2c-ocores";
+			reg = <0 0x1610a000 0 0x1000>;
+			#address-cells = <1>;
+			#size-cells = <0>;
+			interrupt-parent = <&extioiic>;
+			interrupts = <16>;
+			clock-frequency = <400000>;
+			status = "disabled";
+		};
+
+		i2c3: i2c@0x1610b000 {
+			compatible = "opencores,i2c-ocores";
+			reg = <0 0x1610b000 0 0x1000>;
+			#address-cells = <1>;
+			#size-cells = <0>;
+			interrupt-parent = <&extioiic>;
+			interrupts = <17>;
+			clock-frequency = <400000>;
+			status = "disabled";
+		};
+
+		emmc0: emmc@0x16140000 {
+			compatible = "loongson,ls-mmc";
+			reg = <0 0x16140000 0 0x8000>;
+			pinctrl-0 = <&sdio0_pins>;
+			pinctrl-names = "default";
+			cap-sd-highspeed;
+			cap-mmc-highspeed;
+			status = "disabled";
+		};
+
+		sdio1: mmc@0x16148000 {
+			compatible = "loongson,ls-mmc";
+			reg = <0 0x16148000 0 0x8000>;
+			pinctrl-0 = <&sdio1_pins>;
+			pinctrl-names = "default";
+			cap-sd-highspeed;
+			cap-mmc-highspeed;
+			status = "disabled";
+		};
+
+		ehci@0x16080000 {
+			compatible = "generic-ehci";
+			reg = <0 0x16080000 0 0x8000>;
+			dma-mask = <0x0 0xffffffff>;
+		};
+
+		ohci@0x16088000 {
+			compatible = "generic-ohci";
+			reg = <0 0x16088000 0 0x8000>;
+			dma-mask = <0x0 0xffffffff>;
+		};
+
+		otg: otg@0x16040000 {
+			compatible = "snps,dwc2";
+			reg = <0 0x16040000 0 0x40000>;
+			dma-mask = <0x0 0xffffffff>;
+			status = "disabled";
+		};
+
+		// 必须是 watchdog_d 意味着 detect 用于长时间的任务检测
+		wdt:watchdog_d{
+			compatible = "loongson,ls2x-wdt";
+			reg = <0 0x16124000 0 0xC>;
+			clocks = <&apb_clk>;
+			clock-names = "clk";
+			status = "okay";
+		};
+	};
+};
